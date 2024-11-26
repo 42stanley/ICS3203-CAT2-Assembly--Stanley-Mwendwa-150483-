@@ -1,34 +1,33 @@
-section .data
-    result resb 1  ; Store factorial result here
+section .bss
+    result resq 1          ; Reserve 8 bytes for factorial result (since 64-bit)
 
 section .text
     global _start
 
 _start:
-    mov eax, 5             ; Input number for factorial (e.g., 5)
+    mov rdi, 5             ; Input number for factorial (e.g., 5)
     call factorial         ; Call factorial subroutine
-    ; Result is now in eax
+    ; Result is in rax
 
-exit:
-    mov eax, 1             ; sys_exit
-    xor ebx, ebx
-    int 0x80
+    ; Exit the program
+    mov rax, 60            ; syscall: exit
+    xor rdi, rdi           ; status 0
+    syscall
 
 factorial:
-    push ebp               ; Save base pointer
-    mov ebp, esp           ; New stack frame
-    push eax               ; Push number for factorial
+    push rbp               ; Save base pointer
+    mov rbp, rsp           ; New stack frame
 
-    mov ecx, 1             ; Initialize result in ecx
+    mov rax, 1             ; Initialize result to 1
+    cmp rdi, 1             ; Compare input number with 1
+    jle end_factorial      ; If rdi <= 1, return 1
+
 factorial_loop:
-    cmp eax, 1             ; Compare eax with 1
-    je end_factorial       ; If eax == 1, end recursion
-    mul ecx                ; Multiply result by eax
-    dec eax                ; Decrement eax
-    jmp factorial_loop     ; Repeat
+    imul rax, rdi          ; Multiply result (rax) by current number (rdi)
+    dec rdi                ; Decrement the input number
+    cmp rdi, 1             ; Check if rdi == 1
+    jg factorial_loop      ; Continue loop if rdi > 1
 
 end_factorial:
-    pop eax                ; Restore eax
-    mov [result], ecx      ; Move result to memory
-    pop ebp                ; Restore previous stack frame
+    pop rbp                ; Restore previous stack frame
     ret                    ; Return to main program
