@@ -5,6 +5,16 @@ This is a repository that contains CAT2 for Assembly Language Programming
 
 ## **1. Purpose of the Program**
 
+### **Control Flow and Conditional Logic**
+
+The **Control Flow** program accepts an integer input from the user and performs a simple control flow operation to determine whether the input number is positive, negative, or zero. It uses the `printf` and `scanf` functions to interact with the user and handle input/output.
+
+The program includes:
+- Prompting the user for input.
+- Checking the input using conditional statements (`if` and `else`).
+- Printing messages based on whether the number is positive, negative, or zero.
+- Exiting the program once the message is printed.
+
 ### **Modular Program for Factorial Calculation**
 
 The purpose of the `modular_program.asm` is to compute the factorial of a given number. The program is designed with modularity in mind, where the factorial calculation is separated into its own subroutine. This ensures better readability and code reuse. The subroutine demonstrates the usage of the stack to preserve registers and modular programming concepts. The final result of the factorial calculation is stored in the `rax` register.
@@ -20,6 +30,27 @@ The program manipulates memory locations (simulated ports) to reflect the status
 ---
 
 ## **2. Instructions for Running and Compiling the Code**
+
+### **Control Flow and Conditional Logic**
+
+**Steps to Compile and Run:**
+1. **Assemble the program**: Use the NASM assembler to convert the `.asm` file into an object file.
+   ```bash
+   nasm -f elf64 control_flow.asm -o control_flow.o
+    ```
+
+2. **Link the Object File**: Use the linker to create an executable.
+    ```bash
+    gcc -m64 -no-pie control_flow.o -o control_flow -lc -dynamic-linker /lib64/ld-linux-x86-64.so.2
+    ```
+
+3. **Run the Program**:
+    ```bash
+    ./control_flow
+    ```
+**Expected Outcome**: The Control Flow program interacts with the user, prompting them to input a number. Based on the user's input, the program should output if a number is positive, negative or zero.
+
+---
 
 ### **Modular Program for Factorial Calculation**
 
@@ -66,6 +97,17 @@ The program manipulates memory locations (simulated ports) to reflect the status
 ---
 
 ## **3. Insights and Challenges Encountered**
+
+### **Control Flow and Conditional Logic**
+**Insights:**
+- The program demonstrates basic control flow mechanisms like cmp and conditional jumps (je, jl).
+- It utilizes system calls for basic I/O operations (using printf and scanf).
+
+**Challenges:**
+- Linking issues with external libraries such as printf and scanf required proper setup of the linker and dynamic linking.
+- Ensuring the correct memory handling and proper calls to external functions (printf and scanf) was challenging, especially with handling exit operations.
+
+---
 
 ### **Modular Program for Factorial Calculation**
 
