@@ -1,5 +1,5 @@
 section .data
-    sensorValue db 3         ; Simulated sensor value
+    sensorValue db 3         ; Simulated sensor value (e.g., water level sensor)
     motorStatus db 0         ; Motor status (0 = off, 1 = on)
     alarmStatus db 0         ; Alarm status (0 = off, 1 = on)
 
@@ -7,33 +7,35 @@ section .text
     global _start
 
 _start:
-    mov al, [sensorValue]    ; Load sensor value
+    ; Read the simulated sensor value
+    mov al, [sensorValue]    ; Load sensor value into al register
 
-    cmp al, 5
-    jg high_level            ; If sensorValue > 5, go to high level
+    ; Compare the sensor value to determine action
+    cmp al, 5                ; Compare sensor value with 5
+    jg high_level            ; If sensor value > 5, go to high level (high water level)
 
-    cmp al, 3
-    jge moderate_level       ; If sensorValue >= 3, moderate level
+    cmp al, 3                ; Compare sensor value with 3
+    jge moderate_level       ; If sensor value >= 3, go to moderate level (medium water level)
 
 low_level:
-    ; Turn on motor, no alarm
-    mov byte [motorStatus], 1
-    mov byte [alarmStatus], 0
+    ; Low water level: Turn motor on, no alarm
+    mov byte [motorStatus], 1    ; Set motorStatus to 1 (motor on)
+    mov byte [alarmStatus], 0    ; Set alarmStatus to 0 (alarm off)
     jmp done
 
 moderate_level:
-    ; Turn off motor, no alarm
-    mov byte [motorStatus], 0
-    mov byte [alarmStatus], 0
+    ; Moderate water level: Turn motor off, no alarm
+    mov byte [motorStatus], 0    ; Set motorStatus to 0 (motor off)
+    mov byte [alarmStatus], 0    ; Set alarmStatus to 0 (alarm off)
     jmp done
 
 high_level:
-    ; Turn on alarm
-    mov byte [motorStatus], 0
-    mov byte [alarmStatus], 1
+    ; High water level: Turn motor off, trigger alarm
+    mov byte [motorStatus], 0    ; Set motorStatus to 0 (motor off)
+    mov byte [alarmStatus], 1    ; Set alarmStatus to 1 (alarm on)
 
 done:
-    ; Exit or continue program
-    mov eax, 1               ; sys_exit
-    xor ebx, ebx
-    int 0x80
+    ; Exit the program
+    mov rax, 60            ; syscall: exit
+    xor rdi, rdi           ; status 0
+    syscall

@@ -3,10 +3,10 @@ section .data
     positiveMsg db "The number is POSITIVE", 10, 0
     negativeMsg db "The number is NEGATIVE", 10, 0
     zeroMsg db "The number is ZERO", 10, 0
-    format db "%d", 0       ; Define the format specifier for scanf
+    format db "%d", 0        ; Format specifier for scanf
 
 section .bss
-    num resd 1              ; Reserve 4 bytes (1 integer) for user input
+    num resd 1               ; Reserve 4 bytes for integer input
 
 section .text
     global main
@@ -14,39 +14,43 @@ section .text
 
 main:
     ; Print input message
-    push inputMsg
+    lea rdi, [inputMsg]      ; Load address of inputMsg into rdi
+    xor eax, eax             ; Clear eax (no floating point args)
     call printf
-    add esp, 4
 
     ; Read input number
-    push num                ; Address of the variable to store the input
-    push format             ; Format specifier ("%d")
+    lea rdi, [format]        ; Format specifier ("%d")
+    lea rsi, [num]           ; Address to store the input
+    xor eax, eax             ; Clear eax (no floating point args)
     call scanf
-    add esp, 8
 
     ; Load the input number into EAX for comparison
-    mov eax, [num]          ; Move the integer value into EAX
+    mov eax, [num]           ; Move the integer value into EAX
 
     ; Compare value
     cmp eax, 0
-    je is_zero              ; Jump if the number is zero
-    jl is_negative          ; Jump if the number is less than zero
+    je is_zero               ; Jump if the number is zero
+    jl is_negative           ; Jump if the number is less than zero
 
 is_positive:
-    push positiveMsg
+    lea rdi, [positiveMsg]
+    xor eax, eax
     call printf
     jmp end_program
 
 is_negative:
-    push negativeMsg
+    lea rdi, [negativeMsg]
+    xor eax, eax
     call printf
     jmp end_program
 
 is_zero:
-    push zeroMsg
+    lea rdi, [zeroMsg]
+    xor eax, eax
     call printf
 
 end_program:
     ; Exit the program
-    push 0
-    call exit
+    mov eax, 60              ; sys_exit system call number (60)
+    xor edi, edi             ; Exit status 0
+    syscall
